@@ -6,29 +6,37 @@ var Twitter = require("twitter");
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
 
-console.log(spotify);
-
-var newInput = process.argv[2];
+var selector = process.argv[2];
 var user = process.argv[3];
+var amount = parseFloat(process.argv[4]);
 
+// var test = [];
 
-if (newInput === "twit" && user) {
-  console.log(user);
-  userSearch();
-} else if (newInput === "twit" && !user) {
-  console.log("please be sure to include a @Name to search!");
+// test.push(selector, user, amount);
+// console.log(test);
+
+switch (selector) {
+  case ("twit"):
+    if (user && amount) {
+      console.log(user);
+      userSearch();
+    } else {
+      console.log("please be sure to include a @Name to search and an amount of data to be pulled!");
+    }
+    break;
+
+  case ("spot"):
+    console.log("in");
+    spotifySearch();
+    break;
+
 }
-
-if (newInput == "spot") {
-  spotifySearch();
-}
-
 
 //twitter search function
 function userSearch() {
   var parameters = {
     screen_name: user,
-    count: 20
+    count: amount
   }
 
   client.get("statuses/user_timeline", parameters, function (err, tweets) {
@@ -44,18 +52,19 @@ function userSearch() {
   });
 }
 
-
-//spotify
-
+// data.tracks.items.length
+// spotify
 
 function spotifySearch() {
-  spotify.POST ("https://accounts.spotify.com/api/token")
-
-  spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
+  spotify.search({ type: 'track', query: 'All the Small Things' }, function (err, data) {
     if (err) {
       return console.log('Error occurred: ' + err);
     }
-   
-  console.log(data); 
+
+    for (var i = 0; i < data.tracks.items.length; i++) {
+      var newestPost = data.tracks.items.name;
+      console.log(data.tracks.items[i].album.external_urls.spotify);
+      console.log(newestPost);
+    }
   });
 }
