@@ -71,6 +71,8 @@ function twitterSearch() {
   });
 }
 
+var temp = [];
+
 function spotifySearch() {
   var questions = [{
     type: "input",
@@ -82,7 +84,8 @@ function spotifySearch() {
   inquirer.prompt(questions).then(function (answer) {
     var search = {
       type: 'track',
-      query: answer.track
+      query: answer.track,
+      limit: 5
     }
 
     spotify.search(search, function (err, data) {
@@ -90,19 +93,30 @@ function spotifySearch() {
         return console.log('Error occurred: ' + err);
       }
 
-      for (var i = 0; i < data.tracks.items.length || i === 5; i++) {
+      for (var i = 0; i < data.tracks.items.length; i++) {
         // var spotSearch = data.tracks.items[i].name;
-        var secSearch = data.tracks.items[i].name + "\n " + data.tracks.items[i].album.external_urls.spotify;
+        var secSearch = data.tracks.items[i].album.external_urls.spotify;
+        temp.push(secSearch);
         // console.log(spotSearch);
-        console.log(secSearch);
+        // console.log(secSearch);
       }
-    });
+      test();
+    })
   });
 }
 
+function test() {
+  inquirer.prompt({
+    message: "What track would like to open up?",
+    type: "list",
+    name: "links",
+    choices: temp
+  }).then(function(answer){
+    opn(answer.links);
+  })
+};
 
 function movie() {
-
   var questions = ([
     {
       type: 'input',
